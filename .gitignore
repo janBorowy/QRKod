@@ -1,3 +1,5 @@
 .*
 !.gitignore
 QRKod.iml
+build/
+gradle/

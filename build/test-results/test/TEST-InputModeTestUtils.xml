@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="InputModeTestUtils" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-07-24T20:22:35" hostname="janek-Legion-Y540-15IRH-PG0" time="0.037">
-  <properties/>
-  <testcase name="testTestInputMode()" classname="InputModeTestUtils" time="0.037"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
