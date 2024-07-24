@@ -22,3 +22,6 @@ S
 #src/test/kotlin/QREnumsTestUtils.kt,3/f/3f3b28d5aa8144e68ef3f880175209ad241a886d
 J
 src/main/kotlin/QREnums.kt,3/2/321b77d2334696b16ffe1f89023850868abd72f2
+:
+
+LICENSE.md,4/a/4a8486805915245bbbe2e3c8c1a9d680c6843a82
