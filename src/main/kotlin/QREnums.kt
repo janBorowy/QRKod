@@ -1,10 +1,13 @@
 package pl.student
 
-enum class InputMode {
-    NUMERIC,
-    ALPHANUMERIC,
-    BINARY
-//    KANJI
+import java.util.BitSet
+
+enum class InputMode() {
+    NUMERIC(),
+    ALPHANUMERIC(),
+    BINARY();
+//    KANJI(0b1000);
+
 }
 
 enum class ErrorCorrectionLevel {

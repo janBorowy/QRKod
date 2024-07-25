@@ -13,7 +13,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
-internal class QREnumsTestUtils {
+internal class QREnumsTestUtilsSpec {
 
     @Test
     fun testIsNumericMode() {
