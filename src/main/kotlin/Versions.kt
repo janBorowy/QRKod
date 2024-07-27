@@ -15,25 +15,30 @@ fun determineVersionToEncodeIn(size: Int): Int {
 
 data class Version(
     val index: Int,
-    val numberOfCodewords: Map<ErrorCorrectionLevel, Int>,
-    val numberOfDataBits: Map<ErrorCorrectionLevel, Int>,
+    val numberOfCodewords: (ErrorCorrectionLevel) -> Int,
+    val numberOfDataBits: (ErrorCorrectionLevel) -> Int,
     val numberOfCountBits: (InputMode) -> Int,
-    val dataCapacity: Map<ErrorCorrectionLevel, (InputMode) -> Int>
+    val dataCapacity: (ErrorCorrectionLevel) -> (InputMode) -> Int
 )
 
-val version4 = Version(index = 4,
-    numberOfCodewords = mapOf(
-        L to 80,
-        M to 64,
-        Q to 48,
-        H to 36
-    ),
-    numberOfDataBits = mapOf(
-        L to 640,
-        M to 512,
-        Q to 384,
-        H to 288
-    ),
+val version4 = Version(
+    index = 4,
+    numberOfCodewords = { errorCorrectionLevel ->
+        when (errorCorrectionLevel) {
+            L -> 80
+            M -> 64
+            Q -> 48
+            H -> 36
+        }
+    },
+    numberOfDataBits = { errorCorrectionLevel ->
+        when (errorCorrectionLevel) {
+            L -> 640
+            M -> 512
+            Q -> 384
+            H -> 288
+        }
+    },
     numberOfCountBits = {
         when (it) {
             NUMERIC -> 10
@@ -41,34 +46,39 @@ val version4 = Version(index = 4,
             BINARY -> 8
         }
     },
-    dataCapacity = mapOf(
-        L to { mode ->
-            when (mode) {
-                NUMERIC -> 187
-                ALPHANUMERIC -> 114
-                BINARY -> 78
+    dataCapacity = { errorCorrectionLevel ->
+        when (errorCorrectionLevel) {
+            L -> { mode ->
+                when (mode) {
+                    NUMERIC -> 187
+                    ALPHANUMERIC -> 114
+                    BINARY -> 78
+                }
             }
-        },
-        M to { mode ->
-            when (mode) {
-                NUMERIC -> 149
-                ALPHANUMERIC -> 90
-                BINARY -> 62
+
+            M -> { mode ->
+                when (mode) {
+                    NUMERIC -> 149
+                    ALPHANUMERIC -> 90
+                    BINARY -> 62
+                }
             }
-        },
-        Q to { mode ->
-            when (mode) {
-                NUMERIC -> 111
-                ALPHANUMERIC -> 67
-                BINARY -> 46
+
+            Q -> { mode ->
+                when (mode) {
+                    NUMERIC -> 111
+                    ALPHANUMERIC -> 67
+                    BINARY -> 46
+                }
             }
-        },
-        H to { mode ->
-            when (mode) {
-                NUMERIC -> 82
-                ALPHANUMERIC -> 50
-                BINARY -> 34
+
+            H -> { mode ->
+                when (mode) {
+                    NUMERIC -> 82
+                    ALPHANUMERIC -> 50
+                    BINARY -> 34
+                }
             }
         }
-    )
+    }
 )

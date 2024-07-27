@@ -1,6 +1,7 @@
 package pl.student
 
 import java.nio.ByteBuffer
+import kotlin.math.min
 
 data class Bit(val on: Boolean) {
 
