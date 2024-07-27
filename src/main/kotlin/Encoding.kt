@@ -5,16 +5,18 @@ interface Encoder {
 }
 
 const val GROUP_SIZE = 3
+const val CANNOT_ENCODE_INPUT_MESSAGE = "Cannot encode input"
+const val NOT_ENOUGH_SPACE_TO_ENCODE_BINARY_MESSAGE = "Not enough space to encode binary"
 
-object NumericEncoder : Encoder {
+internal object NumericEncoder : Encoder {
 
-    private val NUMERIC_MODE_INDICATOR: Bits = Bits.of(0, 0, 0, 1)
+    private val NUMERIC_MODE_INDICATOR: Bits = Bits.of("0001")
 
     override fun encode(input: String, version: Version): Bits {
         validateInput(input)
-        val digitGroups = groupString(input, GROUP_SIZE)
-        val numbers = digitGroups.map {convertGroupToBits(it)}.toTypedArray()
-        val countIndicator = encodeInteger(input.length, version.numberOfCountBits(InputMode.NUMERIC))
+        val digitGroups = input.groupString(GROUP_SIZE)
+        val numbers = digitGroups.map { convertGroupToBits(it) }.toTypedArray()
+        val countIndicator = input.length.toBinary(version.numberOfCountBits(InputMode.NUMERIC))
         return Bits.concatonated(NUMERIC_MODE_INDICATOR, countIndicator, *numbers)
     }
 
@@ -25,27 +27,59 @@ object NumericEncoder : Encoder {
             1 -> 4
             else -> throw IllegalStateException("Groups of more than 3 digits were not expected")
         }
-        return encodeInteger(str.toInt(), size)
-    }
-
-    private fun encodeInteger(int: Int, resultSize: Int): Bits {
-        val binary = int.toBinary()
-        require (resultSize >= binary.size) {"Not enough space to encode binary"}
-        val result = Bits.zeroes(resultSize)
-        result.or(binary)
-        return result
+        return str.toInt().toBinary(size)
     }
 
     private fun validateInput(input: String) =
-        require(input.all { it in '0'..'9' }) {"Cannot encode input"}
+        require(isNumeric(input)) { CANNOT_ENCODE_INPUT_MESSAGE }
 }
 
-object AlphanumericEncoder : Encoder {
+internal object AlphanumericEncoder : Encoder {
 
+    private val ALPHANUMERIC_MODE_INDICATOR = Bits.of("0010")
 
     override fun encode(input: String, version: Version): Bits {
-        TODO("Not yet implemented")
+        validateInput(input)
+        val groups = input.groupString(2)
+        val values = groups.map { encodeAlphanumericGroup(it) }
+        val countIndicator = input.length.toBinary(version.numberOfCountBits(InputMode.ALPHANUMERIC))
+        return Bits.concatonated(ALPHANUMERIC_MODE_INDICATOR, countIndicator, *values.toTypedArray())
     }
 
+    private fun encodeAlphanumericGroup(group: String): Bits {
+        return when (group.length) {
+            2 -> encodeAlphanumericForDouble(group[0] to group[1])
+            1 -> encodeAlphanumericForSingle(group[0])
+            else -> throw IllegalArgumentException(NOT_ENOUGH_SPACE_TO_ENCODE_BINARY_MESSAGE)
+        }
+    }
+
+    private fun encodeAlphanumericForDouble(pair: Pair<Char, Char>): Bits {
+        return (getAlphanumericValue(pair.first) * 45 + getAlphanumericValue(pair.second)).toBinary(11)
+    }
+
+    private fun encodeAlphanumericForSingle(char: Char): Bits {
+        return getAlphanumericValue(char).toBinary(6)
+    }
+
+    private fun validateInput(input: String) {
+        require(isAlphanumeric(input)) { CANNOT_ENCODE_INPUT_MESSAGE }
+    }
+}
+
+internal object BinaryEncoder : Encoder {
+
+    private val BINARY_MODE_INDICATOR: Bits = Bits.of("0100")
+
+    override fun encode(input: String, version: Version): Bits {
+        validateInput(input)
+        val binaryValues = bitsOfByteBuffer(Charsets.ISO_8859_1.encode(input))
+        val countIndicator = input.length.toBinary(version.numberOfCountBits(InputMode.BINARY))
+        return Bits.concatonated(BINARY_MODE_INDICATOR, countIndicator, binaryValues)
+    }
+
+    private fun validateInput(input: String) {
+        require(isBinary(input)) { CANNOT_ENCODE_INPUT_MESSAGE }
+    }
 
 }

@@ -1,14 +1,14 @@
 import org.junit.jupiter.api.Test
-import pl.student.Bits
+import pl.student.*
+import pl.student.AlphanumericEncoder
 import pl.student.NumericEncoder
-import pl.student.version4
 import kotlin.test.assertEquals
 
 
-class EncodingSpec {
+internal class EncodingSpec {
 
     @Test
-    fun shouldEncodeProperly() {
+    fun shouldEncodeNumericProperly() {
         assertEquals(Bits.concatonated(
             Bits.of("0001"),
             Bits.of("0000001000"),
@@ -29,5 +29,47 @@ class EncodingSpec {
             Bits.of("0111001000"),
             Bits.of("1100010101")
         ), NumericEncoder.encode("123456789", version4))
+    }
+
+    @Test
+    fun shouldEncodeAlphanumericProperly() {
+        assertEquals(Bits.concatonated(
+            Bits.of("0010"),
+            Bits.of("000000101"),
+            Bits.of("00111001110"),
+            Bits.of("11100111001"),
+            Bits.of("000010")
+        ), AlphanumericEncoder.encode("AC-42", version4))
+
+        assertEquals(Bits.concatonated(
+            Bits.of("0010"),
+            Bits.of("000000110"),
+            Bits.of("00111001110"),
+            Bits.of("11100111001"),
+            Bits.of("00001011011")
+        ), AlphanumericEncoder.encode("AC-421", version4))
+
+        assertEquals(Bits.concatonated(
+            Bits.of("0010"),
+            Bits.of("000000000")
+        ), AlphanumericEncoder.encode("", version4))
+    }
+
+    @Test
+    fun shouldEncodeBinaryProperly() {
+        assertEquals(Bits.concatonated(
+            Bits.of("0100"),
+            Bits.of("00000101"),
+            Bits.of("01000001"),
+            Bits.of("01000011"),
+            Bits.of("00101101"),
+            Bits.of("00110100"),
+            Bits.of("00110010")
+        ), BinaryEncoder.encode("AC-42", version4))
+
+        assertEquals(Bits.concatonated(
+            Bits.of("0100"),
+            Bits.of("00000000"),
+        ), BinaryEncoder.encode("", version4))
     }
 }

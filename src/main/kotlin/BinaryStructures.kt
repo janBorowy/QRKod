@@ -1,5 +1,7 @@
 package pl.student
 
+import java.nio.ByteBuffer
+
 data class Bit(val on: Boolean) {
 
     companion object {
@@ -46,3 +48,15 @@ data class Bits(val bits: MutableList<Bit>) : MutableList<Bit> by bits {
         return bits.joinToString(separator = "") { if (it.on) "1" else "0"  }
     }
 }
+
+internal fun bitsOfByteBuffer(buffer: ByteBuffer): Bits {
+    val onList: MutableList<Boolean> = mutableListOf()
+    while (buffer.hasRemaining()) {
+        val byte: Int = buffer.get().toInt()
+        for (shift in 7 downTo 0) {
+            onList.add(byte.shr(shift).takeLowestOneBit() == 1)
+        }
+    }
+    return Bits(onList.map { Bit(it) }.toMutableList())
+}
+

@@ -1,6 +1,6 @@
 package pl.student
 
-fun GET_ALPHANUMERIC_VALUE(char: Char): Int {
+fun getAlphanumericValue(char: Char): Int {
     return when (char) {
         '0' -> 0
         '1' -> 1

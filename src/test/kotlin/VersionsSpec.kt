@@ -3,7 +3,7 @@ import org.junit.jupiter.api.assertThrows
 import pl.student.determineVersionToEncodeIn
 import kotlin.test.assertEquals
 
-class VersionsSpec {
+internal class VersionsSpec {
 
     @Test
     fun testDetermineVersionToEncodeIn() {
