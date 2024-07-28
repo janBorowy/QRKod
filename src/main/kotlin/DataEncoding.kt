@@ -1,7 +1,5 @@
 package pl.student
 
-import kotlin.math.min
-
 abstract class Encoder(private val version: Version, private val errorCorrectionLevel: ErrorCorrectionLevel) {
     abstract fun encode(input: String): Bits
 
@@ -9,7 +7,7 @@ abstract class Encoder(private val version: Version, private val errorCorrection
         val paddingSize = version.numberOfDataBits(errorCorrectionLevel) - result.size
         if (paddingSize >= 4) {
             result.addAll(Bits.of("0000"))
-            result.addAll(Bits.of("0".repeat(result.size % 8)))
+            result.addAll(Bits.of("0".repeat(if (result.size % 8 != 0) 8 - result.size % 8 else 0 )))
             var alternate = true
             while (version.numberOfDataBits(errorCorrectionLevel) != result.size) {
                 result.addAll(Bits.of(if (alternate) "11101100" else "00010001"))
@@ -21,9 +19,9 @@ abstract class Encoder(private val version: Version, private val errorCorrection
     }
 }
 
-const val GROUP_SIZE = 3
-const val CANNOT_ENCODE_INPUT_MESSAGE = "Cannot encode input"
-const val NOT_ENOUGH_SPACE_TO_ENCODE_BINARY_MESSAGE = "Not enough space to encode binary"
+private const val GROUP_SIZE = 3
+private const val CANNOT_ENCODE_INPUT_MESSAGE = "Cannot encode input"
+private const val NOT_ENOUGH_SPACE_TO_ENCODE_BINARY_MESSAGE = "Not enough space to encode binary"
 
 internal class NumericEncoder(
     private val version: Version,
@@ -33,7 +31,7 @@ internal class NumericEncoder(
 
     override fun encode(input: String): Bits {
         validateInput(input)
-        val digitGroups = input.groupString(GROUP_SIZE)
+        val digitGroups = input.group(GROUP_SIZE)
         val numbers = digitGroups.map { convertGroupToBits(it) }.toTypedArray()
         val countIndicator = input.length.toBinary(version.numberOfCountBits(InputMode.NUMERIC))
         val result = Bits.concatonated(NUMERIC_MODE_INDICATOR, countIndicator, *numbers)
@@ -63,7 +61,7 @@ internal class AlphanumericEncoder(
 
     override fun encode(input: String): Bits {
         validateInput(input)
-        val groups = input.groupString(2)
+        val groups = input.group(2)
         val values = groups.map { encodeAlphanumericGroup(it) }
         val countIndicator = input.length.toBinary(version.numberOfCountBits(InputMode.ALPHANUMERIC))
         val result = Bits.concatonated(ALPHANUMERIC_MODE_INDICATOR, countIndicator, *values.toTypedArray())

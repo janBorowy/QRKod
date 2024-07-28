@@ -1,5 +1,7 @@
 package pl.student
 
+private const val NOT_ENOUGH_SPACE_TO_ENCODE_BINARY_MESSAGE = "Not enough space to encode binary"
+
 internal fun Int.toBinary(): Bits {
     val bits = Bits()
     var currentValue = this
