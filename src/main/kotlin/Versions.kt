@@ -18,7 +18,13 @@ data class Version(
     val numberOfCodewords: (ErrorCorrectionLevel) -> Int,
     val numberOfDataBits: (ErrorCorrectionLevel) -> Int,
     val numberOfCountBits: (InputMode) -> Int,
+    val numberOfErrorCorrectionCodewords: (ErrorCorrectionLevel) -> Int,
     val dataCapacity: (ErrorCorrectionLevel) -> (InputMode) -> Int
+)
+
+val version1 = Version(
+    index = 1,
+    numberOfCodewords =
 )
 
 val version4 = Version(
@@ -44,6 +50,14 @@ val version4 = Version(
             NUMERIC -> 10
             ALPHANUMERIC -> 9
             BINARY -> 8
+        }
+    },
+    numberOfErrorCorrectionCodewords = { errorCorrectionLevel ->
+        when (errorCorrectionLevel) {
+            L -> 20
+            M -> 36
+            Q -> 52
+            H -> 64
         }
     },
     dataCapacity = { errorCorrectionLevel ->

@@ -61,3 +61,6 @@ internal fun bitsOfByteBuffer(buffer: ByteBuffer): Bits {
     return Bits(onList.map { Bit(it) }.toMutableList())
 }
 
+internal fun MutableList<Bit>.toBits(): Bits {
+    return Bits(this)
+}

@@ -1,6 +1,17 @@
 package pl.student
 
-data class Polynomial(val exponentToCoefficient: Map<Int, PolynomialCoefficient>)
+import java.util.SortedMap
+
+data class Polynomial(val exponentToCoefficient: SortedMap<Int, PolynomialCoefficient>) {
+    val leadTerm: Map.Entry<Int, PolynomialCoefficient>
+        get() = exponentToCoefficient.lastEntry()
+
+    companion object {
+        fun ofSingleExponent(value: Int): Polynomial {
+            return Polynomial(sortedMapOf(value to PolynomialCoefficient(1)))
+        }
+    }
+}
 
 data class PolynomialCoefficient(val value: Int) {
 
@@ -13,7 +24,7 @@ data class PolynomialCoefficient(val value: Int) {
 
     companion object {
         fun ofAlpha(exponent: Int): PolynomialCoefficient {
-            require(exponent in 0..256) { "Exponent must be in GF(256)" }
+            require(exponent in 0 until 256) { "Exponent must be in GF(256)" }
             return PolynomialCoefficient(GF256Exponents.exponentToValue[exponent]!!)
         }
     }

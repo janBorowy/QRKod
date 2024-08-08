@@ -19,6 +19,7 @@ object GF256Exponents {
         }
         // In GF(256), 2^0 = 1 and 2^255 = 1, so 0 == 255, should not matter much
         initValueToExponent[1] = 0
+        initExponentToValue[0] = 1
 
         exponentToValue = initExponentToValue
         valueToExponent = initValueToExponent
